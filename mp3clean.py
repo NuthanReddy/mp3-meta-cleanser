@@ -104,8 +104,7 @@ class CleanMyMusic:
             if filename.endswith(".mp3"):
                 file_path = os.path.join(self.args.dir, filename)
                 self.t.parse(file_path)
-                for et in self.args.set:
-                    eval('self.t._set' + et + '(u"\u0020".join(self.args.value))')
+                eval('self.t._set' + self.args.set + '(u"\u0020".join(self.args.value))')
                 self.t.save()
 
     @staticmethod
