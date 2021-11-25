@@ -29,9 +29,9 @@ class CleanMyMusic:
             self._set_value()
         if self.args.cleanse:
             self._cleanse()
-        if self.args.trackno:
+        if self.args.gettrackno:
             self._get_track()
-        if self.args.invtrackno:
+        if self.args.addtrackno:
             self._inv_track()
         if self.args.gettrack:
             self._set_track()
@@ -116,9 +116,9 @@ class CleanMyMusic:
         elif regex == "* -":
             return strng.split(" -")[-1].strip()
         elif regex == "- *":
-            return strng.split("- ")[0].strip()
+            return "- ".join(strng.split("- ")[0:-1]).strip()
         elif regex == ":: *":
-            return strng.split(":: ")[0].strip()
+            return ":: ".join(strng.split(":: ")[0:-1]).strip()
         elif regex == '-':
             return re.sub("-", '', strng)
         elif regex == '-':
@@ -201,23 +201,26 @@ class CleanMyMusic:
 
     def _parse_args(self):
         group = self.parser.add_argument_group('options')
-        self.parser.add_argument('--version', action='version', version='%(prog)s 0.5.0')
-        self.parser.add_argument('dir', help='Directory of the files to be formatted', type=str)
-        group.add_argument('-c', '--case', help='Change the case to Title Case', action='store_true')
+        self.parser.add_argument('--version', action='version', version='%(prog)s 0.5.1')
+        self.parser.add_argument('--dir', help='Directory of the files to be formatted', type=str)
+        group.add_argument('-c', '--case', help='Change the case to Title Case of given entities.\n'
+                                                'Prerequisite: -e argument', action='store_true')
         group.add_argument('-nc', '--nocomments', help='Remove comments if any', action='store_true')
-        group.add_argument('-tn', '--trackno', help='Get Track No from Filename', action='store_true')
-        group.add_argument('-itn', '--invtrackno', help='Add Track No to Filename', action='store_true')
-        group.add_argument('-cl', '--cleanse', help='Remove unwanted characters that match a pattern',
+        group.add_argument('--gettrackno', help='Get Track No from Filename', action='store_true')
+        group.add_argument('--addtrackno', help='Add Track No to Filename', action='store_true')
+        group.add_argument('--cleanse', help='Remove unwanted characters that match a pattern',
                            choices=['[*]', '(*)', '- *', '* -', ':: *', '_', '-'], type=str)
-        group.add_argument('-gt', '--gettrack', help='Gets track number from Title', action='store_true')
-        group.add_argument('-gtn', '--gettitle', help='Gets Title from Filename', action='store_true')
+        group.add_argument('--gettrack', help='Gets track number from Title', action='store_true')
+        group.add_argument('--gettitle', help='Gets Title from Filename', action='store_true')
         group.add_argument('-nt', '--newtrack', help='Adds new track numbers', action='store_true')
         group.add_argument('-e', '--entity', help='What to format', required=False, action='append',
                            choices=['Title', 'Filename', 'Album', 'Artist', 'AlbumArtist', 'Genre', 'All'], type=str)
-        group.add_argument('-t', '--trim', help='Trim characters to left or right', choices=['l', 'r'],
-                           type=str)
+        group.add_argument('-t', '--trim', help='Trim -n characters to left or right.\n'
+                                                'Prerequisite: -n argument.',
+                           choices=['l', 'r'], type=str)
         group.add_argument('-n', '--num', help='Number of character to be trimmed', type=int)
-        group.add_argument('-s', '--set', help='Set any option',
+        group.add_argument('-s', '--set', help='Manually set value of an entity.\n'
+                                               'Prerequisite: -v argument.',
                            choices=['Album', 'Artist', 'AlbumArtist', 'Genre'], type=str)
         group.add_argument('-v', '--value', nargs="*", help='Value of choice given in set', type=str)
         self.args = self.parser.parse_args()
