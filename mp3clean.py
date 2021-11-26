@@ -228,5 +228,6 @@ class CleanMyMusic:
             self.args.entity = self.t_map.keys()
 
 
+# main
 if __name__ == '__main__':
     CleanMyMusic().main()
